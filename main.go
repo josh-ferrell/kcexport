@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os"
 	"io/ioutil"
-	"github.com/ghodss/yaml"
+	"gopkg.in/yaml.v3"
 	"kcexport/api"
-	"encoding/json"
 	"errors"
 )
 
@@ -59,15 +58,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Works to produce JSON
-	kcYAML, err := yaml.YAMLToJSON(kcf)
-	if err != nil {
-		fmt.Println("Error converting YAML")
-		os.Exit(1)
-	}
-
 	var kcObj api.Config
-	json.Unmarshal(kcYAML, &kcObj)
+	yaml.Unmarshal(kcf, &kcObj)
 
 	context_name := os.Args[1]
 	context_data, err := getContext(context_name, kcObj.Contexts)
