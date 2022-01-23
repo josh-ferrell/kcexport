@@ -90,13 +90,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	var new_config api.Config
-	new_config.APIVersion = "v1"
-	new_config.Kind = "Config"
-	new_config.CurrentContext = context_name
-	new_config.Clusters = append(new_config.Clusters, *cluster_data)
-	new_config.Contexts = append(new_config.Contexts, *context_data)
-	new_config.Users = append(new_config.Users, *user_data)
+	var new_config = api.Config{
+		APIVersion: "v1",
+		Kind: "Config",
+		CurrentContext: context_name,
+		Clusters: []api.Clusters{*cluster_data},
+		Contexts: []api.Contexts{*context_data},
+		Users: []api.Users{*user_data},
+	}
 
 	yC, err := yaml.Marshal(new_config)
 	if err != nil {
