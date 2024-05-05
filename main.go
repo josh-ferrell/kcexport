@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 	"io/ioutil"
-	"gopkg.in/yaml.v3"
-	"kcexport/api"
 	"errors"
+	"kcexport/api"
+	"gopkg.in/yaml.v3"
+	flag "github.com/spf13/pflag"
 )
 
 func getContext(context_name string, contexts []api.Contexts) (*api.Contexts, error) {
@@ -38,12 +39,16 @@ func getUser(user_name string, users []api.Users) (*api.Users, error) {
 
 func main() {
 
-	if len(os.Args) == 1 {
+	var context_name string
+	var kc string
+	flag.StringVarP(&context_name, "context", "c", "", "Provide context to export")
+	flag.StringVarP(&kc, "kubeconfig", "k", fmt.Sprintf("%s/.kube/config", os.Getenv("HOME")), "Please provide kubeconfig")
+	flag.Parse()
+
+	if context_name == "" {
 		fmt.Println("You must provide the name of the context to export")
 		os.Exit(1)
 	}
-
-	kc := fmt.Sprintf("%s/.kube/config", os.Getenv("HOME"))
 
 	_, err := os.Stat(kc)
 
@@ -61,7 +66,7 @@ func main() {
 	var kcObj api.Config
 	yaml.Unmarshal(kcf, &kcObj)
 
-	context_name := os.Args[1]
+	//context_name := os.Args[1]
 	context_data, err := getContext(context_name, kcObj.Contexts)
 	if err != nil {
 		fmt.Println(err)
